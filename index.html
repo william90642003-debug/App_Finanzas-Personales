@@ -647,6 +647,112 @@ svg text{font-family:'DM Sans',sans-serif;}
 .ai-alert-sub{font-size:11.5px;color:var(--muted-p);}
 .ai-alert-arrow{font-size:16px;color:var(--muted-p);}
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   PDF EXPORT MODAL
+═══════════════════════════════════════════════════════════════════ */
+.pdf-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:250;display:none;align-items:flex-end;
+  backdrop-filter:blur(4px);
+}
+.pdf-overlay.open{display:flex;}
+.pdf-sheet{
+  background:#fff;border-radius:24px 24px 0 0;
+  border-top:1px solid var(--border-l);
+  padding:10px 20px max(24px,env(safe-area-inset-bottom));
+  width:100%;animation:slideUp .28s cubic-bezier(.32,.72,0,1);
+}
+.pdf-handle{width:36px;height:4px;border-radius:2px;background:var(--border-l);margin:10px auto 18px;}
+.pdf-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text-l);margin-bottom:6px;}
+.pdf-sub{font-size:13px;color:var(--muted-l);margin-bottom:22px;}
+
+.pdf-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.pdf-type-btn{
+  padding:14px 12px;border-radius:14px;
+  border:2px solid var(--border-l);background:#f9fafb;
+  text-align:center;cursor:pointer;transition:all .18s;
+}
+.pdf-type-btn:hover{border-color:var(--accent);background:#f5f0ff;}
+.pdf-type-btn.selected{border-color:var(--accent);background:#f5f0ff;}
+.pdf-type-btn.full-width{grid-column:1/-1;}
+.pdf-type-icon{font-size:24px;margin-bottom:6px;}
+.pdf-type-label{font-size:13px;font-weight:700;color:var(--text-l);}
+.pdf-type-desc{font-size:11px;color:var(--muted-l);margin-top:2px;}
+
+.pdf-date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.pdf-date-row.single{grid-template-columns:1fr;}
+.pdf-field label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-l);font-weight:700;margin-bottom:7px;}
+.pdf-field select,.pdf-field input[type=date]{
+  width:100%;padding:12px 14px;
+  background:#f9fafb;border:1.5px solid var(--border-l);
+  border-radius:12px;color:var(--text-l);font-size:14px;
+  font-family:'DM Sans',sans-serif;outline:none;
+  transition:border-color .2s;
+}
+.pdf-field select:focus,.pdf-field input:focus{border-color:var(--accent);}
+
+.pdf-actions{display:flex;gap:10px;margin-top:4px;}
+.pdf-btn-cancel{flex:1;padding:14px;border-radius:12px;background:#f3f4f6;color:var(--muted-l);font-size:14px;font-weight:600;border:none;cursor:pointer;}
+.pdf-btn-export{
+  flex:2;padding:14px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,#7c3aed,#9d5cf6);
+  color:#fff;font-size:14px;font-weight:700;
+  box-shadow:0 4px 14px rgba(124,58,237,.35);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .2s;
+}
+.pdf-btn-export:disabled{opacity:.6;cursor:not-allowed;}
+
+/* PDF export button in topbar */
+.pdf-topbar-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(168,85,247,.15);border:1px solid var(--border-p);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:15px;
+}
+
+/* Hidden print area */
+#pdf-print-area{display:none;}
+@media print{
+  body > *{display:none!important;}
+  #pdf-print-area{
+    display:block!important;
+    font-family:'DM Sans',Arial,sans-serif;
+    color:#111;background:#fff;
+    padding:0;margin:0;
+  }
+  .pdf-page{padding:32px 36px;max-width:800px;margin:0 auto;}
+  .pdf-page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #7c3aed;}
+  .pdf-logo{font-size:28px;font-weight:900;color:#7c3aed;letter-spacing:.04em;}
+  .pdf-report-meta{text-align:right;font-size:12px;color:#6b7280;}
+  .pdf-report-meta strong{display:block;font-size:15px;color:#111;margin-bottom:2px;}
+  .pdf-section-title{font-size:14px;font-weight:800;color:#7c3aed;letter-spacing:.08em;text-transform:uppercase;margin:24px 0 14px;padding-bottom:6px;border-bottom:1px solid #e5e7eb;}
+  .pdf-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:8px;}
+  .pdf-kpi{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px;border-top:3px solid #7c3aed;}
+  .pdf-kpi.ing{border-top-color:#059669;}
+  .pdf-kpi.sal{border-top-color:#dc2626;}
+  .pdf-kpi.neg{border-top-color:#dc2626;}
+  .pdf-kpi-lbl{font-size:10px;color:#6b7280;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+  .pdf-kpi-val{font-size:18px;font-weight:800;color:#111;}
+  .pdf-kpi-val.v-ing{color:#059669;}
+  .pdf-kpi-val.v-sal{color:#dc2626;}
+  .pdf-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .pdf-table th{background:#f3f4f6;padding:9px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;}
+  .pdf-table td{padding:9px 10px;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+  .pdf-table tr:nth-child(even) td{background:#fafafa;}
+  .pdf-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+  .pdf-badge.ing{background:#d1fae5;color:#059669;}
+  .pdf-badge.sal{background:#fee2e2;color:#dc2626;}
+  .pdf-val-ing{color:#059669;font-weight:700;}
+  .pdf-val-sal{color:#dc2626;font-weight:700;}
+  .pdf-cat-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .pdf-cat-bar-bg{flex:1;height:8px;background:#f3f4f6;border-radius:4px;}
+  .pdf-cat-bar-fill{height:8px;border-radius:4px;background:#7c3aed;}
+  .pdf-footer{margin-top:36px;padding-top:16px;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;}
+  @page{margin:0;size:A4;}
+}
+
 </style>
 </head>
 <body>
@@ -1074,7 +1180,8 @@ function showAuthScreen(tab='login'){
 function hideAuthScreen(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app-shell').style.display='flex';
-  showAIFab();document.getElementById('app-shell').style.flexDirection='column';
+  showAIFab();
+  document.getElementById("pdf-topbar-btn").style.display="flex";document.getElementById('app-shell').style.flexDirection='column';
   document.getElementById('app-shell').style.flexDirection='column';
 }
 function showAuthTab(tab){
@@ -1594,6 +1701,229 @@ async function deleteCat(id){
 }
 
 
+
+// ══════════════════════════════════════════════════════════════════
+//  PDF EXPORT
+// ══════════════════════════════════════════════════════════════════
+let pdfType = 'month';
+
+function openPDFModal(){
+  document.getElementById('pdf-overlay').classList.add('open');
+  populatePDFMonths();
+  // Set default date range to current month
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const lastDay  = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+  document.getElementById('pdf-date-from').value = firstDay;
+  document.getElementById('pdf-date-to').value   = lastDay;
+}
+function closePDFModal(){
+  document.getElementById('pdf-overlay').classList.remove('open');
+}
+function selectPDFType(type){
+  pdfType = type;
+  ['month','range','all'].forEach(t=>{
+    document.getElementById('pdf-type-'+t).classList.toggle('selected', t===type);
+    const inp = document.getElementById('pdf-input-'+t);
+    if(inp) inp.style.display = t===type ? '' : 'none';
+  });
+  if(type==='all'){
+    document.getElementById('pdf-input-month').style.display='none';
+    document.getElementById('pdf-input-range').style.display='none';
+  }
+}
+function populatePDFMonths(){
+  const sel = document.getElementById('pdf-month-select');
+  const months = new Set();
+  movimientos.forEach(m => {
+    const d = new Date(m.fecha);
+    months.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+  });
+  const sorted = [...months].sort().reverse();
+  const now = new Date();
+  const current = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  sel.innerHTML = sorted.map(m => {
+    const [y,mo] = m.split('-');
+    const label = new Date(y, mo-1, 1).toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+    return `<option value="${m}" ${m===current?'selected':''}>${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;
+  }).join('');
+}
+
+function getFilteredMovimientos(){
+  let filtered = [...movimientos];
+  if(pdfType === 'month'){
+    const [year, month] = document.getElementById('pdf-month-select').value.split('-');
+    filtered = filtered.filter(m => {
+      const d = new Date(m.fecha);
+      return d.getFullYear()===parseInt(year) && (d.getMonth()+1)===parseInt(month);
+    });
+  } else if(pdfType === 'range'){
+    const from = document.getElementById('pdf-date-from').value;
+    const to   = document.getElementById('pdf-date-to').value;
+    filtered = filtered.filter(m => m.fecha >= from && m.fecha <= to);
+  }
+  return filtered.sort((a,b) => b.fecha.localeCompare(a.fecha));
+}
+
+function getPDFTitle(){
+  if(pdfType === 'month'){
+    const [year, month] = document.getElementById('pdf-month-select').value.split('-');
+    const label = new Date(year, month-1, 1).toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+    return 'Reporte ' + label.charAt(0).toUpperCase() + label.slice(1);
+  } else if(pdfType === 'range'){
+    const from = document.getElementById('pdf-date-from').value;
+    const to   = document.getElementById('pdf-date-to').value;
+    const fmtDate = d => new Date(d+'T12:00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'});
+    return `Reporte ${fmtDate(from)} – ${fmtDate(to)}`;
+  }
+  return 'Historial Completo';
+}
+
+function generatePDF(){
+  const btn = document.getElementById('pdf-btn-export');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generando...';
+
+  try{
+    const movs = getFilteredMovimientos();
+    if(!movs.length){ toast('⚠️ No hay movimientos en el período seleccionado'); btn.disabled=false; btn.innerHTML='📄 Generar PDF'; return; }
+
+    const totalIng = movs.filter(m=>m.tipo==='Ingreso').reduce((s,m)=>s+m.valor,0);
+    const totalSal = movs.filter(m=>m.tipo==='Salida').reduce((s,m)=>s+m.valor,0);
+    const balance  = totalIng - totalSal;
+
+    // Top categories
+    const byCat = {};
+    movs.filter(m=>m.tipo==='Salida').forEach(m=>{byCat[m.catId]=(byCat[m.catId]||0)+m.valor;});
+    const topCats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const maxCat  = topCats[0]?.[1] || 1;
+
+    // Top comercios
+    const byC = {};
+    movs.filter(m=>m.tipo==='Salida').forEach(m=>{byC[m.comercio]=(byC[m.comercio]||0)+m.valor;});
+    const topComs = Object.entries(byC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    const now      = new Date();
+    const userName = currentUser?.name || 'Usuario';
+    const title    = getPDFTitle();
+
+    // Build print HTML
+    const printHTML = `
+      <div class="pdf-page">
+        <!-- Header -->
+        <div class="pdf-page-header">
+          <div>
+            <div class="pdf-logo">CORE</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:3px;">Finanzas Personales</div>
+          </div>
+          <div class="pdf-report-meta">
+            <strong>${title}</strong>
+            Usuario: ${userName}<br>
+            Generado: ${now.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})}
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="pdf-section-title">Resumen Ejecutivo</div>
+        <div class="pdf-kpi-grid">
+          <div class="pdf-kpi ing">
+            <div class="pdf-kpi-lbl">Total Ingresos</div>
+            <div class="pdf-kpi-val v-ing">${fmtCOP(totalIng)}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:3px;">${movs.filter(m=>m.tipo==='Ingreso').length} movimientos</div>
+          </div>
+          <div class="pdf-kpi sal">
+            <div class="pdf-kpi-lbl">Total Egresos</div>
+            <div class="pdf-kpi-val v-sal">${fmtCOP(totalSal)}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:3px;">${movs.filter(m=>m.tipo==='Salida').length} movimientos</div>
+          </div>
+          <div class="pdf-kpi ${balance<0?'neg':''}">
+            <div class="pdf-kpi-lbl">Balance Neto</div>
+            <div class="pdf-kpi-val ${balance>=0?'v-ing':'v-sal'}">${balance>=0?'+':''}${fmtCOP(balance)}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:3px;">${balance>=0?'Flujo positivo ✓':'Flujo negativo ⚠'}</div>
+          </div>
+        </div>
+
+        <!-- Top categories -->
+        ${topCats.length ? `
+        <div class="pdf-section-title">Gasto por Categoría</div>
+        <div style="margin-bottom:16px;">
+          ${topCats.map(([id,val])=>{
+            const cat = getCat(id);
+            const pct = Math.round(val/maxCat*100);
+            return `<div class="pdf-cat-row">
+              <div style="width:130px;font-size:12px;font-weight:600;color:#374151;">${cat.icon} ${cat.name}</div>
+              <div class="pdf-cat-bar-bg"><div class="pdf-cat-bar-fill" style="width:${pct}%;background:${cat.color}"></div></div>
+              <div style="width:110px;text-align:right;font-size:12px;font-weight:700;color:${cat.color};">${fmtCOP(val)}</div>
+            </div>`;
+          }).join('')}
+        </div>` : ''}
+
+        <!-- Top comercios -->
+        ${topComs.length ? `
+        <div class="pdf-section-title">Top Comercios</div>
+        <table class="pdf-table" style="margin-bottom:16px;">
+          <thead><tr><th>#</th><th>Comercio</th><th style="text-align:right">Total Gasto</th></tr></thead>
+          <tbody>
+            ${topComs.map(([name,val],i)=>`
+              <tr><td style="color:#6b7280;font-weight:700;">${i+1}</td><td>${name}</td><td style="text-align:right" class="pdf-val-sal">${fmtCOP(val)}</td></tr>
+            `).join('')}
+          </tbody>
+        </table>` : ''}
+
+        <!-- Detail table -->
+        <div class="pdf-section-title">Detalle de Movimientos (${movs.length})</div>
+        <table class="pdf-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Comercio</th>
+              <th>Categoría</th>
+              <th style="text-align:right">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${movs.map(m=>{
+              const cat = getCat(m.catId);
+              return `<tr>
+                <td style="white-space:nowrap;color:#6b7280;">${new Date(m.fecha+'T12:00:00').toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'})}</td>
+                <td><span class="pdf-badge ${m.tipo==='Ingreso'?'ing':'sal'}">${m.tipo==='Salida'?'Egreso':m.tipo}</span></td>
+                <td>${m.detalle}</td>
+                <td style="color:#6b7280;">${m.comercio}</td>
+                <td>${cat.icon} ${cat.name}</td>
+                <td style="text-align:right" class="${m.tipo==='Ingreso'?'pdf-val-ing':'pdf-val-sal'}">${m.tipo==='Ingreso'?'+':'-'}${fmtCOP(m.valor)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="pdf-footer">
+          <span>CORE Finanzas · Reporte generado automáticamente</span>
+          <span>${now.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})} · ${now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('pdf-print-area').innerHTML = printHTML;
+
+    // Trigger print
+    setTimeout(()=>{
+      window.print();
+      closePDFModal();
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar PDF';
+    }, 300);
+
+  } catch(e){
+    console.error(e);
+    toast('⚠️ Error al generar el PDF');
+    btn.disabled = false;
+    btn.innerHTML = '📄 Generar PDF';
+  }
+}
+
 // ══════════════════════════════════════════════════════════════════
 //  AI ASSISTANT
 // ══════════════════════════════════════════════════════════════════
@@ -1888,6 +2218,70 @@ boot();
     </button>
   </div>
 </div>
+
+
+<!-- ══ PDF EXPORT MODAL ════════════════════════════════════════════ -->
+<div class="pdf-overlay" id="pdf-overlay" onclick="if(event.target===this)closePDFModal()">
+  <div class="pdf-sheet">
+    <div class="pdf-handle"></div>
+    <div class="pdf-title">📄 Exportar Reporte</div>
+    <div class="pdf-sub">Genera un PDF profesional de tus finanzas</div>
+
+    <!-- Type selector -->
+    <div class="pdf-type-grid">
+      <div class="pdf-type-btn selected" id="pdf-type-month" onclick="selectPDFType('month')">
+        <div class="pdf-type-icon">📅</div>
+        <div class="pdf-type-label">Mensual</div>
+        <div class="pdf-type-desc">Un mes específico</div>
+      </div>
+      <div class="pdf-type-btn" id="pdf-type-range" onclick="selectPDFType('range')">
+        <div class="pdf-type-icon">📆</div>
+        <div class="pdf-type-label">Por fechas</div>
+        <div class="pdf-type-desc">Rango personalizado</div>
+      </div>
+      <div class="pdf-type-btn full-width" id="pdf-type-all" onclick="selectPDFType('all')">
+        <div class="pdf-type-icon">📊</div>
+        <div class="pdf-type-label">Historial completo</div>
+        <div class="pdf-type-desc">Todos los movimientos registrados</div>
+      </div>
+    </div>
+
+    <!-- Date inputs — month -->
+    <div id="pdf-input-month">
+      <div class="pdf-date-row single">
+        <div class="pdf-field">
+          <label>Mes y año</label>
+          <select id="pdf-month-select"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date inputs — range -->
+    <div id="pdf-input-range" style="display:none">
+      <div class="pdf-date-row">
+        <div class="pdf-field">
+          <label>Desde</label>
+          <input type="date" id="pdf-date-from"/>
+        </div>
+        <div class="pdf-field">
+          <label>Hasta</label>
+          <input type="date" id="pdf-date-to"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="pdf-actions">
+      <button class="pdf-btn-cancel" onclick="closePDFModal()">Cancelar</button>
+      <button class="pdf-btn-export" id="pdf-btn-export" onclick="generatePDF()">
+        <svg width="16" height="16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Generar PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden print area -->
+<div id="pdf-print-area"></div>
 
 </div><!-- /app-shell -->
 </body>

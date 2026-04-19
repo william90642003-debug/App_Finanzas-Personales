@@ -502,10 +502,9 @@ svg text{font-family:'DM Sans',sans-serif;}
 </style>
 </head>
 <body>
-<div class="app" id="app-shell">
 
-  <!-- ══ AUTH SCREEN ═══════════════════════════════════════════════ -->
-<div id="auth-screen" style="display:none">
+<!-- ══ AUTH SCREEN ═══════════════════════════════════════════════ -->
+<div id="auth-screen" style="display:block">
   <div class="auth-wrap">
     <div class="auth-card">
       <div class="auth-logo">
@@ -580,6 +579,9 @@ svg text{font-family:'DM Sans',sans-serif;}
     </div>
   </div>
 </div>
+
+<!-- ══ APP SHELL ══════════════════════════════════════════════════ -->
+<div class="app" id="app-shell" style="display:none">
 
 <!-- ══ TOPBAR ══════════════════════════════════════════════════════ -->
   <div class="topbar" id="topbar">
@@ -913,11 +915,15 @@ const db={
 function showAuthScreen(tab='login'){
   document.getElementById('auth-screen').style.display='block';
   document.getElementById('app-shell').style.display='none';
+  document.getElementById('auth-screen').style.position='fixed';
+  document.getElementById('auth-screen').style.inset='0';
+  document.getElementById('auth-screen').style.zIndex='999';
   showAuthTab(tab);
 }
 function hideAuthScreen(){
   document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app-shell').style.display='flex';
+  document.getElementById('app-shell').style.display='flex';document.getElementById('app-shell').style.flexDirection='column';
+  document.getElementById('app-shell').style.flexDirection='column';
 }
 function showAuthTab(tab){
   ['login','register','reset'].forEach(t=>{
@@ -1439,5 +1445,6 @@ async function deleteCat(id){
 // ══════════════════════════════════════════════════════════════════
 boot();
 </script>
+</div><!-- /app-shell -->
 </body>
 </html>

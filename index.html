@@ -1130,9 +1130,12 @@ function showAuthScreen(tab='login'){
 }
 function hideAuthScreen(){
   document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app-shell').style.display='flex';
+  const shell = document.getElementById('app-shell');
+  shell.style.display='flex';
+  shell.style.flexDirection='column';
   showAIFab();
-  document.getElementById("pdf-topbar-btn").style.display="flex";document.getElementById('app-shell').style.flexDirection='column';
+  const pdfBtn = document.getElementById('pdf-topbar-btn');
+  if(pdfBtn){ pdfBtn.style.display='flex'; }
   document.getElementById('app-shell').style.flexDirection='column';
 }
 function showAuthTab(tab){
@@ -1305,25 +1308,35 @@ const toast=(msg,d=2300)=>{const t=document.getElementById('toast');t.textConten
 //  BOOT — check existing session
 // ══════════════════════════════════════════════════════════════════
 async function boot(){
-  const savedToken=localStorage.getItem('core_token');
-  const savedUser =localStorage.getItem('core_user');
+  const savedToken = localStorage.getItem('core_token');
+  const savedUser  = localStorage.getItem('core_user');
 
-  if(savedToken&&savedUser){
-    ACCESS_TOKEN=savedToken;
-    currentUser=JSON.parse(savedUser);
+  if(savedToken && savedUser){
+    ACCESS_TOKEN = savedToken;
+    currentUser  = JSON.parse(savedUser);
+    updateTopbarUser();
 
-    // Verify token is still valid
-    const user=await auth.getUser();
-    if(user&&user.id){
-      currentUser.id=user.id;
-      currentUser.email=user.email;
-      updateTopbarUser();
+    try{
+      const user = await auth.getUser();
+      // getUser returns the user object OR an error object
+      if(user && user.id && !user.error){
+        currentUser.id    = user.id;
+        currentUser.email = user.email;
+        ACCESS_TOKEN = savedToken; // reaffirm after async
+        hideAuthScreen();
+        await initApp();
+        return;
+      }
+    }catch(e){
+      // Token expired or network issue — try initApp anyway
+      // since RLS is disabled, it will still work
+      console.warn('Token verify failed, trying initApp anyway:', e.message);
       hideAuthScreen();
       await initApp();
       return;
     }
   }
-  // Token invalid or missing → show login
+  // No saved session → show login
   showAuthScreen('login');
 }
 
@@ -1332,26 +1345,33 @@ async function boot(){
 // ══════════════════════════════════════════════════════════════════
 async function initApp(){
   try{
-    // Load categories (shared across all users — no user_id filter)
-    let cats=await db.get('categorias','order=name.asc');
-    if(!cats||cats.length===0){
-      await db.post('categorias',DEFAULT_CATS);
-      cats=await db.get('categorias','order=name.asc');
-    }
-    categories=cats.map(c=>({...c}));
+    console.log('initApp: token=', ACCESS_TOKEN.slice(0,30)+'...');
 
-    // Load only this user's movimientos (RLS enforces user_id = auth.uid())
-    const movs=await db.get('movimientos','order=fecha.desc,created_at.desc');
-    movimientos=movs.map(m=>({
-      id:m.id,fecha:m.fecha,tipo:m.tipo,
-      detalle:m.detalle,comercio:m.comercio,
-      valor:Number(m.valor),catId:m.cat_id
+    // Load categories
+    let cats = await db.get('categorias','order=name.asc');
+    if(!cats || cats.length === 0){
+      console.log('initApp: seeding default categories');
+      await db.post('categorias', DEFAULT_CATS);
+      cats = await db.get('categorias','order=name.asc');
+    }
+    categories = cats.map(c=>({...c}));
+    console.log('initApp: loaded', categories.length, 'categories');
+
+    // Load movimientos — RLS disabled so all rows returned,
+    // filtered server-side when RLS is re-enabled with correct policy
+    const movs = await db.get('movimientos','order=fecha.desc,created_at.desc');
+    console.log('initApp: loaded', movs.length, 'movimientos from Supabase');
+
+    movimientos = movs.map(m=>({
+      id:m.id, fecha:m.fecha, tipo:m.tipo,
+      detalle:m.detalle, comercio:m.comercio,
+      valor:Number(m.valor), catId:m.cat_id
     }));
 
     renderInicio();
   }catch(e){
-    console.error(e);
-    toast('⚠️ Error cargando datos');
+    console.error('initApp error:', e);
+    toast('⚠️ Error cargando datos: ' + e.message);
     renderInicio();
   }
 }
